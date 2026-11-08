@@ -24,6 +24,7 @@
     --c-cbc-bg:#f3e8ff;  --c-cbc-fg:#6b2bb0;
     --c-twcpi-bg:#e3f6f7; --c-twcpi-fg:#157b82;
     --c-signal-bg:#ffe9e3; --c-signal-fg:#c1401a;
+    --c-earnings-bg:#fff3d6; --c-earnings-fg:#9a6400;
   }
   @media (prefers-color-scheme: dark){
     :root{
@@ -44,6 +45,7 @@
       --c-cbc-bg:#2a1b40;  --c-cbc-fg:#cda6f0;
       --c-twcpi-bg:#0f2a2c; --c-twcpi-fg:#7fd6da;
       --c-signal-bg:#3a1c12; --c-signal-fg:#ff9a73;
+      --c-earnings-bg:#3a2e0a; --c-earnings-fg:#f0c04b;
     }
   }
   *{box-sizing:border-box;}
@@ -199,6 +201,17 @@
   }
   .state-msg a{color:var(--accent);}
 
+  .tbd-box{
+    background:var(--card);
+    border:1px dashed var(--border);
+    border-radius:12px;
+    padding:14px;
+    margin:18px 0 6px;
+    font-size:12.5px;
+    color:var(--text-muted);
+  }
+  .tbd-box strong{color:var(--text);}
+
   footer{
     max-width:720px;
     margin:36px auto 0;
@@ -214,7 +227,7 @@
 
 <header>
   <h1>📅 財經重要日子（美國＋台灣）</h1>
-  <p class="subtitle">今天&民天 財經行事曆｜FOMC・PCE・台灣央行・台灣CPI・景氣對策信號燈</p>
+  <p class="subtitle">今天&民天 財經行事曆｜FOMC・PCE・台灣央行・台灣CPI・景氣對策信號燈・重要公司財報</p>
   <div class="meta-row">
     <span id="updated-at">資料載入中…</span>
     <span>｜</span>
@@ -228,15 +241,21 @@
   <button class="chip-btn active" data-filter="all">全部</button>
   <button class="chip-btn" data-filter="tw">台灣</button>
   <button class="chip-btn" data-filter="us">美國</button>
+  <button class="chip-btn" data-filter="earnings">財報</button>
 </div>
 
 <main id="main">
   <div class="state-msg" id="state-msg">資料載入中…</div>
 </main>
 
+<div class="tbd-box" id="earnings-tbd" style="max-width:720px;margin-left:auto;margin-right:auto;">
+  <strong>以下公司下一次財報/法說會日期尚未公告，且查無可靠歷史基準可推估，暫不列入上方行事曆（2026/11/8查核）：</strong>
+  台達電(2308)、國巨(2327)、聯電(2303)、群聯(8299)、環球晶(6488) —— 推估約落在2027年1-2月，待公司正式公告法說會日期後會再補上。
+</div>
+
 <footer>
-  本頁面每次開啟時會自動讀取 GitHub 上最新的 .ics 內容，不需另外更新頁面本身。<br>
-  標示「推估」之事件，官方尚未提前公布確切日期，請以各主管機關官網公告為最終依據。
+  本頁面每次開啟時會自動讀取 GitHub 上最新的 .ics 內容，不需另外更新頁面本身；財報區塊的資料目前是寫在本頁面裡（2026/11/8查核），沒有即時更新，之後需要時再請協助更新。<br>
+  標示「推估」之事件，官方尚未提前公布確切日期，依歷史同期模式推估，請以各公司/機關官方公告為最終依據。「財報」分類為查核當下整理的美股七巨頭＋部分大型股＋台股權值股，非使用者完整持股清單，且不包含在.ics訂閱檔內。
 </footer>
 
 <script>
@@ -259,6 +278,51 @@
       if (CATS[i].test.test(summary)) return CATS[i];
     }
     return { key:"other", label:"其他", cls:"uscpi", group:"other" };
+  }
+
+  var EARNINGS_CAT = { key:"earnings", label:"財報", cls:"earnings", group:"earnings" };
+
+  // ---- 財報(earnings) 靜態資料 ----
+  // 2026/11/8 查核。date = 下一次財報/法說會日期(台北時間，無精確時刻一律用中午佔位)。
+  // confirmed:true 表示公司/機關已正式公告該日期；false 表示依去年同期模式推估，待官方公告後需更新。
+  var EARNINGS_DATA = [
+    // 美股七巨頭
+    { name:"Apple",     ticker:"AAPL",  date:"2027-01-28", confirmed:false, note:"FY27 Q1財報(推估，依去年1/29模式)" },
+    { name:"Microsoft",  ticker:"MSFT",  date:"2027-01-27", confirmed:false, note:"FY27 Q2財報(推估，依去年1/28模式)" },
+    { name:"Alphabet(Google)", ticker:"GOOGL", date:"2027-02-03", confirmed:false, note:"Q4 2026財報(推估，信心較低，歷年日期波動大)" },
+    { name:"Amazon",     ticker:"AMZN",  date:"2027-02-04", confirmed:false, note:"Q4 2026財報(推估，依去年2/5模式)" },
+    { name:"Nvidia",     ticker:"NVDA",  date:"2026-11-17", confirmed:true,  note:"FY27 Q3財報，官方已公告" },
+    { name:"Meta",       ticker:"META",  date:"2027-01-27", confirmed:false, note:"Q4 2026財報(推估，依去年1/28模式)" },
+    { name:"Tesla",      ticker:"TSLA",  date:"2027-01-27", confirmed:false, note:"Q4 2026財報(推估，依去年1/28模式)" },
+    // 其他大型股
+    { name:"Broadcom",   ticker:"AVGO",  date:"2026-12-10", confirmed:false, note:"FY26 Q4財報(推估，依去年12/11模式)" },
+    { name:"Visa",       ticker:"V",     date:"2027-01-28", confirmed:false, note:"FY27 Q1財報(推估，依去年1/29模式)" },
+    { name:"Walmart",    ticker:"WMT",   date:"2026-11-19", confirmed:true,  note:"FY27 Q3財報，官方已公告" },
+    { name:"Netflix",    ticker:"NFLX",  date:"2027-01-20", confirmed:false, note:"Q4 2026財報(推估)" },
+    { name:"Nike",       ticker:"NKE",   date:"2026-12-17", confirmed:false, note:"FY27 Q2財報(推估，依去年12/18模式)" },
+    { name:"BlackRock",  ticker:"BLK",   date:"2027-01-14", confirmed:false, note:"Q4 2026財報(推估，依去年1/15模式)" },
+    // 台股權值/龍頭股
+    { name:"台積電",      ticker:"2330",  date:"2027-01-14", confirmed:false, note:"Q4/全年法說會(推估，依去年1/15模式)" },
+    { name:"聯發科",      ticker:"2454",  date:"2027-02-04", confirmed:false, note:"Q4/全年法說會(推估，依去年2/4模式)" },
+    { name:"鴻海",        ticker:"2317",  date:"2026-11-12", confirmed:true,  note:"Q3法說會，官方已公告" },
+    { name:"廣達",        ticker:"2382",  date:"2026-11-11", confirmed:true,  note:"Q3法說會，官方已公告" },
+    { name:"大立光",      ticker:"3008",  date:"2027-01-08", confirmed:false, note:"Q4/全年法說會(推估，依去年1/8模式)" }
+  ];
+
+  function buildEarningsEvents(){
+    return EARNINGS_DATA.map(function(c){
+      var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(c.date);
+      // 用台北時間中午(無精確公告時刻時的佔位時間) 換算成 UTC (台北 = UTC+8)
+      var dtstart = new Date(Date.UTC(+m[1], +m[2]-1, +m[3], 12-8, 0, 0));
+      var label = c.confirmed ? "官方確認" : "日期推估";
+      return {
+        summary: c.name + "(" + c.ticker + ")財報" + (c.confirmed ? "" : "(日期推估)"),
+        dtstart: dtstart,
+        description: c.note + "｜狀態：" + label + "（2026/11/8查核，僅供參考，請以公司IR/公開資訊觀測站正式公告為準）",
+        location: "財報／法說會",
+        forceCat: EARNINGS_CAT
+      };
+    });
   }
 
   // ---- Minimal RFC5545 parser (handles the fields this calendar uses) ----
@@ -355,7 +419,7 @@
         lastMonthKey = monthKey;
       }
 
-      var cat = classify(e.summary);
+      var cat = e.forceCat || classify(e.summary);
       var isEstimate = /推估/.test(e.summary);
       var cleanTitle = e.summary.replace(/[（(]日期推估[）)]/g,"").trim();
 
@@ -425,7 +489,7 @@
         return res.text();
       })
       .then(function(text){
-        var events = parseICS(text);
+        var events = parseICS(text).concat(buildEarningsEvents());
         render(events);
         var now = new Date();
         document.getElementById("updated-at").textContent =
