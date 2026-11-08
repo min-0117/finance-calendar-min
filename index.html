@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>財經重要日子（美國＋台灣）</title>
+<meta name="description" content="今天&民天 財經行事曆：FOMC、PCE、台灣央行、台灣CPI、景氣對策信號燈等重要財經公布日期一覽">
+<style>
+  :root{
+    --bg:#f6f7f9;
+    --card:#ffffff;
+    --text:#1a1d23;
+    --text-muted:#5b6270;
+    --border:#e3e6ea;
+    --accent:#2563eb;
+    --chip-bg:#eef1f6;
+    --today-bg:#fff7e6;
+    --today-border:#f0b429;
+    --shadow:0 1px 3px rgba(16,24,40,0.08);
+
+    --c-fomc-bg:#e8edff; --c-fomc-fg:#2b3ea8;
+    --c-pce-bg:#e6f7ee;  --c-pce-fg:#1a7a46;
+    --c-uscpi-bg:#f1f2f4; --c-uscpi-fg:#4b5160;
+    --c-cbc-bg:#f3e8ff;  --c-cbc-fg:#6b2bb0;
+    --c-twcpi-bg:#e3f6f7; --c-twcpi-fg:#157b82;
+    --c-signal-bg:#ffe9e3; --c-signal-fg:#c1401a;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0f1115;
+      --card:#181b21;
+      --text:#eef0f3;
+      --text-muted:#9aa2b1;
+      --border:#2a2e37;
+      --accent:#6d93ff;
+      --chip-bg:#232630;
+      --today-bg:#2a2410;
+      --today-border:#caa23a;
+      --shadow:0 1px 3px rgba(0,0,0,0.4);
+
+      --c-fomc-bg:#1c2550; --c-fomc-fg:#9fb0ff;
+      --c-pce-bg:#102a1c;  --c-pce-fg:#7fd9a6;
+      --c-uscpi-bg:#20232b; --c-uscpi-fg:#c2c7d1;
+      --c-cbc-bg:#2a1b40;  --c-cbc-fg:#cda6f0;
+      --c-twcpi-bg:#0f2a2c; --c-twcpi-fg:#7fd6da;
+      --c-signal-bg:#3a1c12; --c-signal-fg:#ff9a73;
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    line-height:1.5;
+    padding-bottom:48px;
+  }
+  header{
+    padding:28px 16px 16px;
+    max-width:720px;
+    margin:0 auto;
+  }
+  h1{
+    font-size:22px;
+    margin:0 0 4px;
+    letter-spacing:0.2px;
+  }
+  .subtitle{
+    color:var(--text-muted);
+    font-size:14px;
+    margin:0;
+  }
+  .meta-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:14px;
+    font-size:13px;
+    color:var(--text-muted);
+  }
+  .meta-row a{color:var(--accent);text-decoration:none;}
+  .meta-row a:hover{text-decoration:underline;}
+
+  .filters{
+    max-width:720px;
+    margin:0 auto;
+    padding:0 16px 8px;
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    position:sticky;
+    top:0;
+    background:var(--bg);
+    padding-top:10px;
+    padding-bottom:10px;
+    z-index:5;
+  }
+  .filters::-webkit-scrollbar{display:none;}
+  .chip-btn{
+    flex:0 0 auto;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+    padding:7px 14px;
+    border-radius:999px;
+    font-size:13px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .chip-btn.active{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+  }
+
+  main{max-width:720px;margin:0 auto;padding:4px 16px 0;}
+
+  .month-heading{
+    font-size:15px;
+    font-weight:700;
+    color:var(--text-muted);
+    margin:26px 0 10px;
+    padding-left:2px;
+  }
+  .month-heading:first-of-type{margin-top:10px;}
+
+  .event-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px 14px;
+    margin-bottom:10px;
+    box-shadow:var(--shadow);
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+  }
+  .event-card.today{
+    background:var(--today-bg);
+    border-color:var(--today-border);
+  }
+  .date-block{
+    flex:0 0 52px;
+    text-align:center;
+  }
+  .date-block .d{
+    font-size:20px;
+    font-weight:700;
+    line-height:1.1;
+  }
+  .date-block .w{
+    font-size:11px;
+    color:var(--text-muted);
+    margin-top:2px;
+  }
+  .event-main{flex:1;min-width:0;}
+  .event-title-row{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:6px;
+    margin-bottom:4px;
+  }
+  .event-title{
+    font-size:15px;
+    font-weight:600;
+  }
+  .tag{
+    font-size:11px;
+    padding:2px 8px;
+    border-radius:999px;
+    font-weight:600;
+  }
+  .est-tag{
+    font-size:11px;
+    padding:2px 8px;
+    border-radius:999px;
+    background:var(--chip-bg);
+    color:var(--text-muted);
+    font-weight:600;
+  }
+  .event-time{
+    font-size:12.5px;
+    color:var(--text-muted);
+    margin-bottom:4px;
+  }
+  .event-desc{
+    font-size:13px;
+    color:var(--text-muted);
+    white-space:pre-line;
+  }
+
+  .state-msg{
+    text-align:center;
+    padding:60px 20px;
+    color:var(--text-muted);
+    font-size:14px;
+  }
+  .state-msg a{color:var(--accent);}
+
+  footer{
+    max-width:720px;
+    margin:36px auto 0;
+    padding:16px;
+    color:var(--text-muted);
+    font-size:12px;
+    text-align:center;
+    border-top:1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📅 財經重要日子（美國＋台灣）</h1>
+  <p class="subtitle">今天&民天 財經行事曆｜FOMC・PCE・台灣央行・台灣CPI・景氣對策信號燈</p>
+  <div class="meta-row">
+    <span id="updated-at">資料載入中…</span>
+    <span>｜</span>
+    <a href="https://raw.githubusercontent.com/min-0117/finance-calendar-min/refs/heads/main/macro_calendar_v2.ics">訂閱 .ics 連結</a>
+    <span>｜</span>
+    <a href="https://github.com/min-0117/finance-calendar-min">GitHub repo</a>
+  </div>
+</header>
+
+<div class="filters" id="filters">
+  <button class="chip-btn active" data-filter="all">全部</button>
+  <button class="chip-btn" data-filter="tw">台灣</button>
+  <button class="chip-btn" data-filter="us">美國</button>
+</div>
+
+<main id="main">
+  <div class="state-msg" id="state-msg">資料載入中…</div>
+</main>
+
+<footer>
+  本頁面每次開啟時會自動讀取 GitHub 上最新的 .ics 內容，不需另外更新頁面本身。<br>
+  標示「推估」之事件，官方尚未提前公布確切日期，請以各主管機關官網公告為最終依據。
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var ICS_URL = "https://raw.githubusercontent.com/min-0117/finance-calendar-min/refs/heads/main/macro_calendar_v2.ics";
+
+  var CATS = [
+    { key:"fomc",   test:/FOMC/,                         label:"FOMC",     cls:"fomc",   group:"us" },
+    { key:"pce",    test:/PCE/,                           label:"PCE",      cls:"pce",    group:"us" },
+    { key:"signal", test:/景氣對策信號燈/,                  label:"景氣燈號",  cls:"signal", group:"tw" },
+    { key:"cbc",    test:/央行/,                           label:"台灣央行",  cls:"cbc",    group:"tw" },
+    { key:"twcpi",  test:/台灣CPI/,                        label:"台灣CPI",   cls:"twcpi",  group:"tw" },
+    { key:"uscpi",  test:/美國(CPI|PPI|零售銷售|非農就業)/, label:"美國數據",  cls:"uscpi",  group:"us" }
+  ];
+
+  function classify(summary){
+    for (var i=0;i<CATS.length;i++){
+      if (CATS[i].test.test(summary)) return CATS[i];
+    }
+    return { key:"other", label:"其他", cls:"uscpi", group:"other" };
+  }
+
+  // ---- Minimal RFC5545 parser (handles the fields this calendar uses) ----
+  function unfold(text){
+    return text.replace(/\r\n/g,"\n").replace(/\n[ \t]/g,"");
+  }
+
+  function unescapeText(s){
+    return (s||"")
+      .replace(/\\n/g,"\n")
+      .replace(/\\,/g,",")
+      .replace(/\\;/g,";")
+      .replace(/\\\\/g,"\\");
+  }
+
+  function parseDate(val){
+    // expects YYYYMMDDTHHMMSSZ (UTC) — this calendar always writes UTC
+    var m = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z?$/.exec(val.trim());
+    if(!m) return null;
+    return new Date(Date.UTC(+m[1], +m[2]-1, +m[3], +m[4], +m[5], +m[6]));
+  }
+
+  function parseICS(raw){
+    var lines = unfold(raw).split("\n").filter(function(l){ return l.length>0; });
+    var events = [];
+    var cur = null;
+    for (var i=0;i<lines.length;i++){
+      var line = lines[i];
+      if (line === "BEGIN:VEVENT"){ cur = {}; continue; }
+      if (line === "END:VEVENT"){ if(cur) events.push(cur); cur=null; continue; }
+      if (!cur) continue;
+      var idx = line.indexOf(":");
+      if (idx === -1) continue;
+      var key = line.slice(0,idx).split(";")[0];
+      var val = line.slice(idx+1);
+      if (key === "DTSTART") cur.dtstart = parseDate(val);
+      else if (key === "SUMMARY") cur.summary = unescapeText(val);
+      else if (key === "DESCRIPTION") cur.description = unescapeText(val);
+      else if (key === "LOCATION") cur.location = unescapeText(val);
+      else if (key === "UID") cur.uid = val;
+    }
+    return events.filter(function(e){ return e.dtstart && e.summary; });
+  }
+
+  // ---- Taipei-time formatting (UTC+8, no DST) ----
+  var TPE_OFFSET_MIN = 8*60;
+  function toTaipei(date){
+    return new Date(date.getTime() + TPE_OFFSET_MIN*60000);
+  }
+  var WEEKDAYS = ["日","一","二","三","四","五","六"];
+  function fmtTaipei(date){
+    var t = toTaipei(date);
+    var hh = String(t.getUTCHours()).padStart(2,"0");
+    var mm = String(t.getUTCMinutes()).padStart(2,"0");
+    return {
+      y: t.getUTCFullYear(),
+      mo: t.getUTCMonth()+1,
+      d: t.getUTCDate(),
+      w: WEEKDAYS[t.getUTCDay()],
+      hm: hh+":"+mm
+    };
+  }
+
+  function isSameTaipeiDay(a,b){
+    var ta = toTaipei(a), tb = toTaipei(b);
+    return ta.getUTCFullYear()===tb.getUTCFullYear() &&
+           ta.getUTCMonth()===tb.getUTCMonth() &&
+           ta.getUTCDate()===tb.getUTCDate();
+  }
+
+  function render(events){
+    var main = document.getElementById("main");
+    main.innerHTML = "";
+
+    if (events.length === 0){
+      main.innerHTML = '<div class="state-msg">目前沒有可顯示的事件。</div>';
+      return;
+    }
+
+    events.sort(function(a,b){ return a.dtstart - b.dtstart; });
+
+    var now = new Date();
+    var lastMonthKey = null;
+
+    events.forEach(function(e){
+      var f = fmtTaipei(e.dtstart);
+      var monthKey = f.y+"-"+f.mo;
+      if (monthKey !== lastMonthKey){
+        var h = document.createElement("div");
+        h.className = "month-heading";
+        h.textContent = f.y + "年" + f.mo + "月";
+        h.dataset.group = "heading";
+        main.appendChild(h);
+        lastMonthKey = monthKey;
+      }
+
+      var cat = classify(e.summary);
+      var isEstimate = /推估/.test(e.summary);
+      var cleanTitle = e.summary.replace(/[（(]日期推估[）)]/g,"").trim();
+
+      var card = document.createElement("div");
+      card.className = "event-card" + (isSameTaipeiDay(e.dtstart, now) ? " today" : "");
+      card.dataset.group = cat.group;
+
+      card.innerHTML =
+        '<div class="date-block">' +
+          '<div class="d">' + f.d + '</div>' +
+          '<div class="w">週' + f.w + '</div>' +
+        '</div>' +
+        '<div class="event-main">' +
+          '<div class="event-title-row">' +
+            '<span class="event-title">' + escapeHTML(cleanTitle) + '</span>' +
+            '<span class="tag" style="background:var(--c-' + cat.cls + '-bg);color:var(--c-' + cat.cls + '-fg);">' + cat.label + '</span>' +
+            (isEstimate ? '<span class="est-tag">日期推估</span>' : '') +
+          '</div>' +
+          '<div class="event-time">台北時間 ' + f.hm + (e.location ? '　·　' + escapeHTML(e.location) : '') + '</div>' +
+          (e.description ? '<div class="event-desc">' + escapeHTML(e.description) + '</div>' : '') +
+        '</div>';
+
+      main.appendChild(card);
+    });
+
+    applyFilter(document.querySelector(".chip-btn.active").dataset.filter);
+  }
+
+  function escapeHTML(s){
+    var div = document.createElement("div");
+    div.textContent = s;
+    return div.innerHTML;
+  }
+
+  function applyFilter(filter){
+    document.querySelectorAll(".event-card").forEach(function(card){
+      var show = filter === "all" || card.dataset.group === filter;
+      card.style.display = show ? "flex" : "none";
+    });
+    // hide month headings that have no visible cards under them
+    var headings = Array.prototype.slice.call(document.querySelectorAll(".month-heading"));
+    headings.forEach(function(h, idx){
+      var next = headings[idx+1];
+      var node = h.nextElementSibling;
+      var anyVisible = false;
+      while (node && node !== next){
+        if (node.classList.contains("event-card") && node.style.display !== "none") anyVisible = true;
+        node = node.nextElementSibling;
+      }
+      h.style.display = anyVisible ? "block" : "none";
+    });
+  }
+
+  document.getElementById("filters").addEventListener("click", function(ev){
+    var btn = ev.target.closest(".chip-btn");
+    if (!btn) return;
+    document.querySelectorAll(".chip-btn").forEach(function(b){ b.classList.remove("active"); });
+    btn.classList.add("active");
+    applyFilter(btn.dataset.filter);
+  });
+
+  function load(){
+    var bust = "?t=" + Date.now();
+    fetch(ICS_URL + bust, { cache:"no-store" })
+      .then(function(res){
+        if(!res.ok) throw new Error("HTTP " + res.status);
+        return res.text();
+      })
+      .then(function(text){
+        var events = parseICS(text);
+        render(events);
+        var now = new Date();
+        document.getElementById("updated-at").textContent =
+          "頁面讀取時間：" + now.toLocaleString("zh-TW", { hour12:false });
+      })
+      .catch(function(err){
+        document.getElementById("main").innerHTML =
+          '<div class="state-msg">暫時無法讀取行事曆資料（' + escapeHTML(err.message) +
+          '）。<br>可以直接到 <a href="https://raw.githubusercontent.com/min-0117/finance-calendar-min/refs/heads/main/macro_calendar_v2.ics">原始 .ics 檔案</a> 查看，或稍後重新整理頁面。</div>';
+        document.getElementById("updated-at").textContent = "讀取失敗";
+      });
+  }
+
+  load();
+})();
+</script>
+
+</body>
+</html>
